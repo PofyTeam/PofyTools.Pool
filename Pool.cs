@@ -146,7 +146,7 @@
 
 				IPoolable<T> poolable = newInstance as IPoolable<T>;
 				if (poolable != null) {
-					poolable.pool = this._pool;
+					poolable.Pool = this._pool;
 				}
 
 				return newInstance;

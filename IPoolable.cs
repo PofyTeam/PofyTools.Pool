@@ -12,7 +12,7 @@
 
 	public interface IPoolable<T> : IIdentifiable where T:Component
 	{
-		Pool<T> pool {
+		Pool<T> Pool {
 			get;
 			set;
 		}
