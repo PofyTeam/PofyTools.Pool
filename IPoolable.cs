@@ -12,6 +12,7 @@
 
 	public interface IPoolable<T> : IIdentifiable where T:Component
 	{
+        bool IsActive { get; }
 		Pool<T> Pool {
 			get;
 			set;
