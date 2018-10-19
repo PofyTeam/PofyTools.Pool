@@ -11,7 +11,7 @@
 	{
 		T _component = null;
 
-		public T component {
+		public T Component {
 			get {
 				return _component;
 			}

@@ -7,9 +7,9 @@
 	/// <summary>
 	/// Resource pool. Creates a dictionary with individual pools for each resource prefab
 	/// </summary>
-	public class ResourcePool<T>: IDictionary<string,Pool<T>> where T:Component
+	public class ResourcePool<T>: IDictionary<string,ComponentPool<T>> where T:Component
 	{
-		private Dictionary<string,Pool<T>> _pools = null;
+		private Dictionary<string,ComponentPool<T>> _pools = null;
 		private string _resourcePath;
 
 		public ResourcePool (string resourcePath) : this (resourcePath, -1, true)
@@ -20,7 +20,7 @@
 		public ResourcePool (string resourcePath, int initialCount, bool trackActiveComponents = true)
 		{
 			this._resourcePath = resourcePath;
-			this._pools = new Dictionary<string, Pool<T>> ();
+			this._pools = new Dictionary<string, ComponentPool<T>> ();
 			PreloadPools (initialCount, trackActiveComponents);
 		}
 
@@ -34,34 +34,34 @@
 
 				IIdentifiable identifiable = resource as IIdentifiable;
 				if (identifiable != null)
-					id = identifiable.id;
+					id = identifiable.Id;
 
 				AddPool (resource, id, initialCount, trackActiveComponents);
 			}
 		}
 
 		//Create pool for loaded resource
-		public Pool<T> AddPool (T resource, string id, int count, bool trackActiveComponents = true)
+		public ComponentPool<T> AddPool (T resource, string id, int count, bool trackActiveComponents = true)
 		{
-			Pool<T> pool = null;
+			ComponentPool<T> pool = null;
 			if (!this._pools.TryGetValue (id, out pool)) {
-				pool = new Pool<T> (resource, count, trackActiveComponents);
+				pool = new ComponentPool<T> (resource, count, trackActiveComponents);
 				this._pools [id] = pool;
 			}
 			return pool;
 		}
 
 		//Load resource and create pool
-		public Pool<T> AddPool (string id, int count = 0, bool trackActiveComponent = true)
+		public ComponentPool<T> AddPool (string id, int count = 0, bool trackActiveComponent = true)
 		{
 			T resource = Resources.Load<T> (this._resourcePath + id);
 
 			return AddPool (resource, id, count, trackActiveComponent);
 		}
 
-		public Pool<T> GetPool (string key)
+		public ComponentPool<T> GetPool (string key)
 		{
-			Pool<T> pool = null;
+			ComponentPool<T> pool = null;
 			this._pools.TryGetValue (key, out pool);
 			return pool;
 		}
@@ -81,7 +81,7 @@
 			IIdentifiable identifiable = component as IIdentifiable;
 
 			if (identifiable != null) {
-				id = identifiable.id;
+				id = identifiable.Id;
 			}
 
 			FreeToPool (component, id);
@@ -107,7 +107,7 @@
 
 		public T ObtainFromPool (string id)
 		{
-			Pool<T> pool = null;
+			ComponentPool<T> pool = null;
 			if (!this._pools.TryGetValue (id, out pool))
 				pool = AddPool (id, 1);
 
@@ -120,7 +120,7 @@
 			IIdentifiable identifiable = source as IIdentifiable;
 
 			if (identifiable != null) {
-				sourceId = identifiable.id;
+				sourceId = identifiable.Id;
 			}
 
 			return ObtainFromPool (sourceId);
@@ -150,7 +150,7 @@
 			return this._pools.ContainsKey (key);
 		}
 
-		public void Add (string key, Pool<T> value)
+		public void Add (string key, ComponentPool<T> value)
 		{
 			this._pools.Add (key, value);
 		}
@@ -160,12 +160,12 @@
 			return this._pools.Remove (key);
 		}
 
-		public bool TryGetValue (string key, out Pool<T> value)
+		public bool TryGetValue (string key, out ComponentPool<T> value)
 		{
 			return this._pools.TryGetValue (key, out value);
 		}
 
-		public Pool<T> this [string index] {
+		public ComponentPool<T> this [string index] {
 			get {
 				return this._pools [index];
 			}
@@ -180,7 +180,7 @@
 			}
 		}
 
-		public ICollection<Pool<T>> Values {
+		public ICollection<ComponentPool<T>> Values {
 			get {
 				return this._pools.Values;
 			}
@@ -190,7 +190,7 @@
 
 		#region ICollection implementation
 
-		public void Add (KeyValuePair<string, Pool<T>> item)
+		public void Add (KeyValuePair<string, ComponentPool<T>> item)
 		{
 			throw new System.NotImplementedException ();
 		}
@@ -200,17 +200,17 @@
 			this._pools.Clear ();
 		}
 
-		public bool Contains (KeyValuePair<string, Pool<T>> item)
+		public bool Contains (KeyValuePair<string, ComponentPool<T>> item)
 		{
 			throw new System.NotImplementedException ();
 		}
 
-		public void CopyTo (KeyValuePair<string, Pool<T>>[] array, int arrayIndex)
+		public void CopyTo (KeyValuePair<string, ComponentPool<T>>[] array, int arrayIndex)
 		{
 			throw new System.NotImplementedException ();
 		}
 
-		public bool Remove (KeyValuePair<string, Pool<T>> item)
+		public bool Remove (KeyValuePair<string, ComponentPool<T>> item)
 		{
 			throw new System.NotImplementedException ();
 		}
@@ -231,7 +231,7 @@
 
 		#region IEnumerable implementation
 
-		public IEnumerator<KeyValuePair<string, Pool<T>>> GetEnumerator ()
+		public IEnumerator<KeyValuePair<string, ComponentPool<T>>> GetEnumerator ()
 		{
 			return this._pools.GetEnumerator ();
 		}

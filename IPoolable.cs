@@ -1,25 +1,35 @@
 ﻿namespace PofyTools.Pool
 {
-	using UnityEngine;
-	using System.Collections;
+    using UnityEngine;
+    using System.Collections;
 
-	public interface IIdentifiable
-	{
-		string id {
-			get;
-		}
-	}
+    public interface IIdentifiable
+    {
+        string Id
+        {
+            get;
+        }
+    }
 
-	public interface IPoolable<T> : IIdentifiable where T:Component
-	{
+    public interface IPoolableComponent<T>  where T : Component
+    {
+        ComponentPool<T> Pool
+        {
+            get;
+            set;
+        }
+
         bool IsActive { get; }
-		Pool<T> Pool {
-			get;
-			set;
-		}
+        void Free();
+        void ResetFromPool();
+    }
 
-		void Free ();
+    public interface IPool<T>
+    {
+        T Obtain();
 
-		void ResetFromPool ();
-	}
+        void Free(T instance);
+
+        void Release();
+    }
 }
